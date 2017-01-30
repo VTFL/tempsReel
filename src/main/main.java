@@ -1,0 +1,14 @@
+package main;
+
+/**
+ * Created by Thibault on 30/01/2017.
+ */
+public class main {
+
+    public static void main(String[] args) {
+        //TODO : Lancement interface graphique pour les paramètres de début
+
+
+        //TODO : Lancement de la simulation avec les paramètres
+    }
+}
