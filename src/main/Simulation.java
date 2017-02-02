@@ -1,3 +1,5 @@
+package main;
+
 import bean.Donnee;
 import bean.DonneeTR;
 import bean.Transaction;
