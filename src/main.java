@@ -1,5 +1,3 @@
-package main;
-
 /**
  * Created by Thibault on 30/01/2017.
  */
@@ -10,5 +8,7 @@ public class main {
 
 
         //TODO : Lancement de la simulation avec les paramètres
+        Simulation s = new Simulation(10,5,20,15,1,3);
+        System.out.println(s.lancer());
     }
 }

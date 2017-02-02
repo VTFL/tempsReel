@@ -5,11 +5,15 @@ package bean;
  */
 public class Transaction implements Comparable<Transaction> {
     private int id;
+    private int idDonnee;
+    private int arrivee;
     private int echeance;
 
-    public Transaction(int id, int echeance) {
+    public Transaction(int id, int idDonnee, int arrivee, int echeance) {
 
         this.id = id;
+        this.idDonnee = idDonnee;
+        this.arrivee = arrivee;
         this.echeance = echeance;
     }
 
@@ -27,6 +31,22 @@ public class Transaction implements Comparable<Transaction> {
 
     public void setEcheance(int echeance) {
         this.echeance = echeance;
+    }
+
+    public int getArrivee() {
+        return arrivee;
+    }
+
+    public void setArrivee(int arrivee) {
+        this.arrivee = arrivee;
+    }
+
+    public int getIdDonnee() {
+        return idDonnee;
+    }
+
+    public void setIdDonnee(int idDonnee) {
+        this.idDonnee = idDonnee;
     }
 
     @Override
