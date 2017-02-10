@@ -63,7 +63,8 @@ public class Simulation {
             for(int j=0;j<transactions.size();j++){
                 if(transactions.get(j).getEcheance()<i){
                     transactions.add(new Transaction(ID_TRANSACTION++,transactions.get(j).getIdDonnee(),i,dureeSimulation));
-                    if(donneesTR.get(transactions.get(j).getIdDonnee()).isMisAJour()){
+                    //System.out.println("Pourquoi ça fait de la merde ----> JJJJJJJJJJJJJJJJJJJJ ____________________           : "+ j + " getIdDonne :      " + transactions.get(j).getIdDonnee() + "              ------             Size de transations :       ____        " + donneesTR.size());
+                    if(transactions.get(j).getIdDonnee() < donneesTR.size() && donneesTR.get(transactions.get(j).getIdDonnee()).isMisAJour()){
                         donneesTR.get(transactions.get(j).getIdDonnee()).setReadable(true);
                         donneesTR.get(transactions.get(j).getIdDonnee()).setMisAJour(false);
                     }
@@ -76,9 +77,9 @@ public class Simulation {
             }
 
             //Transactions utilisateur selon le procecuss de poisson.
-            /*if(i==(int) poisson) {
+            if(i==(int) poisson) {
                 poisson = transactionPoisson(i);
-            }*/
+            }
 
             //Création des transactions de mise à jour
             for(DonneeTR d : donneesTR){
@@ -90,7 +91,7 @@ public class Simulation {
 
             //transaction de mise à jour finie
             if(transactions.size()>0){
-                if(donneesTR.get(transactions.get(0).getIdDonnee()).isMisAJour()){
+                if(transactions.get(0).getIdDonnee() < donneesTR.size() && donneesTR.get(transactions.get(0).getIdDonnee()).isMisAJour()){
                     if(donneesTR.get(transactions.get(0).getIdDonnee()).getCptUpdate() == donneesTR.get(transactions.get(0).getIdDonnee()).getTempsUpdate()){
                         donneesTR.get(transactions.get(0).getIdDonnee()).setReadable(true);
                         donneesTR.get(transactions.get(0).getIdDonnee()).setMisAJour(false);
@@ -99,7 +100,7 @@ public class Simulation {
                         transactions.remove(0);
 
                         //On execute la prochaine transaction si il y en a une
-                        if(transactions.size()>0){
+                        if(transactions.size()>0 && transactions.get(0).getIdDonnee() < donneesTR.size()){
                             donneesTR.get(transactions.get(0).getIdDonnee()).setReadable(false);
                             donneesTR.get(transactions.get(0).getIdDonnee()).setMisAJour(true);
                         }
@@ -112,9 +113,12 @@ public class Simulation {
                 }
                 //On traite la prochaine transaction
                 else{
-                    donneesTR.get(transactions.get(0).getIdDonnee()).setReadable(false);
-                    donneesTR.get(transactions.get(0).getIdDonnee()).setMisAJour(true);
-                    donneesTR.get(transactions.get(0).getIdDonnee()).setCptUpdate( donneesTR.get(transactions.get(0).getIdDonnee()).getCptUpdate()+1);
+
+                    if(transactions.get(0).getIdDonnee() < donneesTR.size()) {
+                        donneesTR.get(transactions.get(0).getIdDonnee()).setReadable(false);
+                        donneesTR.get(transactions.get(0).getIdDonnee()).setMisAJour(true);
+                        donneesTR.get(transactions.get(0).getIdDonnee()).setCptUpdate(donneesTR.get(transactions.get(0).getIdDonnee()).getCptUpdate() + 1);
+                    }
                 }
             }
 
@@ -156,8 +160,6 @@ public class Simulation {
     }
 
     private double transactionPoisson(int i) {
-
-        System.out.println("Allow ?");
 
         //Creation Transaction lecture donnée TR
         int indiceRandom = (int) (Math.random()*(donneesTR.size()-1));
