@@ -7,6 +7,7 @@ import bean.Transaction;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * Created by Thibault on 30/01/2017.
@@ -27,7 +28,10 @@ public class Simulation {
     private static int NB_TR_FOIRE;
     private static int NB_FOIRE;
     private static int NB;
-    private int dureeSimulation = 300;
+    private int dureeSimulation = 100;
+    private double lambda = 5.0;
+    private int lectureClassique = 1;
+    private int ecritureClassique = 1;
 
 
     public Simulation(int nbDonneesTR, int validMin, int validMax, int nbDonnees, int tempsUpdateMin, int tempsUpdateMax) {
@@ -49,7 +53,8 @@ public class Simulation {
     public String lancer(){
         donneesTR = creerDonneesTR();
         donnees = creerDonnees();
-        //TODO : Traitement des transactions avec la file
+
+        double poisson = getPoissonRandom(this.lambda);
 
         for(int i=0;i<dureeSimulation;i++){
 
@@ -69,6 +74,11 @@ public class Simulation {
                 }
                 else break;
             }
+
+            //Transactions utilisateur selon le procecuss de poisson.
+            /*if(i==(int) poisson) {
+                poisson = transactionPoisson(i);
+            }*/
 
             //Création des transactions de mise à jour
             for(DonneeTR d : donneesTR){
@@ -131,5 +141,39 @@ public class Simulation {
     //TODO méthode ajouterOperation
     private void ajouterOperation(int nbTransaction, int tempsLectureTR, int tempsLecture, int tempsEcriture){
 
+    }
+
+    private static int getPoissonRandom(double mean) {
+        Random r = new Random();
+        double L = Math.exp(-mean);
+        int k = 0;
+        double p = 1.0;
+        do {
+            p = p * r.nextDouble();
+            k++;
+        } while (p > L);
+        return k - 1;
+    }
+
+    private double transactionPoisson(int i) {
+
+        System.out.println("Allow ?");
+
+        //Creation Transaction lecture donnée TR
+        int indiceRandom = (int) (Math.random()*(donneesTR.size()-1));
+        DonneeTR dtr = donneesTR.get(indiceRandom);
+        transactions.add(new Transaction(ID_TRANSACTION++,dtr.getId(),i, dtr.getEcheance()));
+
+        //Creation Transaction lecture donnée
+        indiceRandom = (int) (Math.random()*(donnees.size()-1));
+        Donnee don = donnees.get(indiceRandom);
+        transactions.add(new Transaction(ID_TRANSACTION++,don.getId(),i, lectureClassique));
+
+        //Creation Transaction ecriture donnée
+        indiceRandom = (int) (Math.random()*(donnees.size()-1));
+        don = donnees.get(indiceRandom);
+        transactions.add(new Transaction(ID_TRANSACTION++,don.getId(),i, ecritureClassique));
+
+        return getPoissonRandom(lambda);
     }
 }
