@@ -34,6 +34,7 @@ public class Simulation {
     private double lambda;
     private int lectureClassique;
     private int ecritureClassique;
+    private boolean isTR;
 
 
     public Simulation(int nbDonneesTR, int validMin, int validMax, int nbDonnees, int tempsUpdateMin, int tempsUpdateMax, int lectureClassique, int ecritureClassique, double lambda, int dureeSimulation) {
@@ -75,12 +76,16 @@ public class Simulation {
                     transactionsTot.add(t);
 
                     if(transactions.get(j).getIdDonnee() < donneesTR.size() && donneesTR.get(transactions.get(j).getIdDonnee()).isMisAJour()){
+                        isTR=true;
                         donneesTR.get(transactions.get(j).getIdDonnee()).setReadable(true);
                         donneesTR.get(transactions.get(j).getIdDonnee()).setMisAJour(false);
                     }
                     transactions.remove(j);
                     j--;
-                    NB_TR_FOIRE++;
+                    if(isTR)
+                        NB_TR_FOIRE++;
+                    else
+                        NB_FOIRE++;
 
                 }
                 else break;
@@ -135,7 +140,7 @@ public class Simulation {
             }
 
         }
-        return "Transactions lancées : "+NB+" dont " + NB_UTIL+ " transactions utilisateurs et "+NB_TR_FOIRE + " transactions ratées";
+        return "Transactions lancées : "+NB+" dont " + NB_UTIL+ " transactions utilisateurs. "+NB_TR_FOIRE + " transactions TR ratées et "+NB_FOIRE+" transactions utilisateurs ratées";
     }
 
     private ArrayList<DonneeTR> creerDonneesTR(){

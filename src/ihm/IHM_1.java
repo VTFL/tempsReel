@@ -182,16 +182,111 @@ public class IHM_1 extends JFrame {
 
     class actionValider1 implements ActionListener{
         public void actionPerformed(ActionEvent e){
-            s = new Simulation(Integer.parseInt(txt_nbDonneesTR.getText()),
-                    Integer.parseInt(txt_intervalle11.getText()),
-                    Integer.parseInt(txt_intervalle12.getText()),
-                    Integer.parseInt(txt_nbDonnees.getText()),
-                    Integer.parseInt(txt_intervalle21.getText()),
-                    Integer.parseInt(txt_intervalle22.getText()),
-                    Integer.parseInt(txt_LectureDonnees.getText()),
-                    Integer.parseInt(txt_EcritureDonnees.getText()),
-                    Double.parseDouble(txt_Lambda.getText()),
-                    Integer.parseInt(txt_DureeSimu.getText()));
+
+            int nbDonneesTR;
+            int intervalle11;
+            int intervalle12;
+            int nbDonnees;
+            int intervalle21;
+            int intervalle22;
+            int lectureDonnees;
+            int ecritureDonnees;
+            double lambda;
+            int dureeSimu;
+
+            try
+            {
+                nbDonneesTR = Integer.parseInt(txt_nbDonneesTR.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre de données Temps Réels à générer" );
+                return;
+            }
+
+            try
+            {
+                intervalle11 = Integer.parseInt(txt_intervalle11.getText());
+                intervalle12 = Integer.parseInt(txt_intervalle12.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre pour l'intervalle de durée de validité" );
+                return;
+            }
+
+            try
+            {
+                nbDonnees = Integer.parseInt(txt_nbDonnees.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre de données classique à générer" );
+                return;
+            }
+
+            try
+            {
+                intervalle21 = Integer.parseInt(txt_intervalle21.getText());
+                intervalle22 = Integer.parseInt(txt_intervalle22.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre pour les temps de mises à jours" );
+                return;
+            }
+
+            try
+            {
+                lectureDonnees = Integer.parseInt(txt_LectureDonnees.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre pour la lecture d'une donnée classique" );
+                return;
+            }
+
+            try
+            {
+                ecritureDonnees = Integer.parseInt(txt_EcritureDonnees.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre l'écriture d'une donnée classique" );
+                return;
+            }
+
+            try
+            {
+                lambda = Double.parseDouble(txt_Lambda.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre pour le lambda de la loi de poisson" );
+                return;
+            }
+
+            try
+            {
+                dureeSimu = Integer.parseInt(txt_DureeSimu.getText());
+            }
+            catch (NumberFormatException ex)
+            {
+                JOptionPane.showMessageDialog(null, "Rentrez un nombre correspondant à la durée de la situmation");
+                return;
+            }
+
+
+            s = new Simulation(nbDonneesTR,
+                    intervalle11,
+                    intervalle12,
+                    nbDonnees,
+                    intervalle21,
+                    intervalle22,
+                    lectureDonnees,
+                    ecritureDonnees,
+                    lambda,
+                    dureeSimu);
 
             String res = s.lancer();
 
