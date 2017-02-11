@@ -51,10 +51,7 @@ public class Transaction implements Comparable<Transaction> {
 
     @Override
     public String toString() {
-        return "Transaction{" +
-                "id=" + id +
-                ", echeance=" + echeance +
-                '}';
+        return "Transaction n°" + id + " crée en " + arrivee + " avec une échéance de " + echeance;
     }
 
     @Override

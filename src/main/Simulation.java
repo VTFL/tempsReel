@@ -140,7 +140,7 @@ public class Simulation {
             }
 
         }
-        return "Transactions lancées : "+NB+" dont " + NB_UTIL+ " transactions utilisateurs. "+NB_TR_FOIRE + " transactions TR ratées et "+NB_FOIRE+" transactions utilisateurs ratées";
+        return "Transactions lancées : "+NB+" dont " + NB_UTIL+ " transactions utilisateurs. "+NB_TR_FOIRE + " transactions TR et "+NB_FOIRE+" transactions utilisateurs ratées";
     }
 
     private ArrayList<DonneeTR> creerDonneesTR(){
