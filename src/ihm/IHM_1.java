@@ -1,12 +1,14 @@
 package ihm;
 
 import javax.swing.*;
-import javax.swing.text.NumberFormatter;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
+import bean.Transaction;
 import main.Simulation;
 
 /**
@@ -15,6 +17,9 @@ import main.Simulation;
 public class IHM_1 extends JFrame {
 
     private JButton btn_Valider;
+    private JButton btn_Test;
+    private JButton btn_New;
+
     private JPanel pan_Intervalle1;
     private JPanel pan_Intervalle2;
     private JPanel pan_nbDonnees;
@@ -23,6 +28,7 @@ public class IHM_1 extends JFrame {
     private JPanel pan_EcritureDonnees;
     private JPanel pan_DureeSimu;
     private JPanel pan_Lambda;
+    private JPanel pan_Button;
 
     private JLabel lbl_nbDonnes;
     private JLabel lbl_nbDonnesTR;
@@ -46,9 +52,16 @@ public class IHM_1 extends JFrame {
 
     private JFormattedTextField txt_intervalle21;
     private JFormattedTextField txt_intervalle22;
+
+    private Simulation s;
+
     public IHM_1(){
         super("Génération BDD temps réel");
 
+        initFrame();
+    }
+
+    private void initFrame() {
         Container cont = getContentPane();
         cont.setLayout(new GridLayout(9,1));
 
@@ -60,6 +73,8 @@ public class IHM_1 extends JFrame {
         pan_EcritureDonnees = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pan_DureeSimu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pan_Lambda = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pan_Button = new JPanel();
+
 
         NumberFormat format = NumberFormat.getInstance();
         NumberFormatter formatter = new NumberFormatter(format);
@@ -68,7 +83,7 @@ public class IHM_1 extends JFrame {
         formatter.setMaximum(Integer.MAX_VALUE);
         formatter.setAllowsInvalid(false);
         // If you want the value to be committed on each keystroke instead of focus lost
-       // formatter.setCommitsOnValidEdit(true);
+        // formatter.setCommitsOnValidEdit(true);
 
 
         lbl_nbDonnesTR = new JLabel("Nombre de données TR à générer\t:");
@@ -138,6 +153,12 @@ public class IHM_1 extends JFrame {
         btn_Valider = new JButton("Valider");
         btn_Valider.addActionListener(new actionValider1());
 
+        btn_Test = new JButton("Test");
+        btn_Test.addActionListener(new actionTest());
+
+        pan_Button.add(btn_Valider);
+        pan_Button.add(btn_Test);
+
         cont.add(pan_nbDonneesTR);
         cont.add(pan_Intervalle1);
         cont.add(pan_nbDonnees);
@@ -146,29 +167,87 @@ public class IHM_1 extends JFrame {
         cont.add(pan_EcritureDonnees);
         cont.add(pan_Lambda);
         cont.add(pan_DureeSimu);
-        cont.add(btn_Valider);
+        cont.add(pan_Button);
 
 
-   // this.setPreferredSize(new Dimension(500,500));
+        // this.setPreferredSize(new Dimension(500,500));
         pack();
         this.setVisible(true);
         this.setDefaultCloseOperation(3);
     }
+
     public static void main(String[] arg){
         new IHM_1();
     }
 
     class actionValider1 implements ActionListener{
         public void actionPerformed(ActionEvent e){
-            Simulation s = new Simulation(Integer.parseInt(txt_nbDonneesTR.getText()),
+            s = new Simulation(Integer.parseInt(txt_nbDonneesTR.getText()),
                     Integer.parseInt(txt_intervalle11.getText()),
                     Integer.parseInt(txt_intervalle12.getText()),
                     Integer.parseInt(txt_nbDonnees.getText()),
                     Integer.parseInt(txt_intervalle21.getText()),
-                    Integer.parseInt(txt_intervalle22.getText()));
+                    Integer.parseInt(txt_intervalle22.getText()),
+                    Integer.parseInt(txt_LectureDonnees.getText()),
+                    Integer.parseInt(txt_EcritureDonnees.getText()),
+                    Double.parseDouble(txt_Lambda.getText()),
+                    Integer.parseInt(txt_DureeSimu.getText()));
 
+            String res = s.lancer();
 
-            System.out.println(s.lancer());
+            afficherTransaction(res);
+        }
+    }
+
+    class actionTest implements ActionListener{
+        public void actionPerformed(ActionEvent e){
+            s = new Simulation(10,5,20,15,1,3,1,1,5.0,300);
+
+            String res = s.lancer();
+
+            afficherTransaction(res);
+        }
+    }
+
+    private void afficherTransaction(String res) {
+
+        Container cont = getContentPane();
+        cont.removeAll();
+        cont.repaint();
+        cont.setLayout(new BorderLayout());
+
+        ArrayList<Transaction> transactions = s.getTransactionsTot();
+
+        JLabel lab_Res = new JLabel(res);
+        lab_Res.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JEditorPane pan_Text = new JEditorPane();
+        pan_Text.setEditable(false);
+
+        for(Transaction t:transactions) {
+            pan_Text.setText(pan_Text.getText()+"\n"+t.toString());
+        }
+
+        JScrollPane pan_Scroll = new JScrollPane(pan_Text);
+
+        btn_New = new JButton("Nouvelle Génération");
+        btn_New.addActionListener(new actionNew());
+
+        cont.add(lab_Res,BorderLayout.NORTH);
+        cont.add(pan_Scroll,BorderLayout.CENTER);
+        cont.add(btn_New,BorderLayout.SOUTH);
+
+        pack();
+        this.setVisible(true);
+        this.setDefaultCloseOperation(3);
+    }
+
+    class actionNew implements ActionListener {
+        public void actionPerformed(ActionEvent e){
+            Container cont = getContentPane();
+            cont.removeAll();
+            cont.repaint();
+            initFrame();
         }
     }
 }

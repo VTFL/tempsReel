@@ -23,27 +23,34 @@ public class Simulation {
     private ArrayList<DonneeTR> donneesTR;
     private ArrayList<Donnee> donnees;
     private ArrayList<Transaction> transactions;
+    private ArrayList<Transaction> transactionsTot;
     private static int ID_DONNEE;
     private static int ID_TRANSACTION;
     private static int NB_TR_FOIRE;
     private static int NB_FOIRE;
     private static int NB;
-    private int dureeSimulation = 100;
-    private double lambda = 5.0;
-    private int lectureClassique = 1;
-    private int ecritureClassique = 1;
+    private static int NB_UTIL;
+    private int dureeSimulation;
+    private double lambda;
+    private int lectureClassique;
+    private int ecritureClassique;
 
 
-    public Simulation(int nbDonneesTR, int validMin, int validMax, int nbDonnees, int tempsUpdateMin, int tempsUpdateMax) {
+    public Simulation(int nbDonneesTR, int validMin, int validMax, int nbDonnees, int tempsUpdateMin, int tempsUpdateMax, int lectureClassique, int ecritureClassique, double lambda, int dureeSimulation) {
         this.nbDonneesTR = nbDonneesTR;
         this.validMin = validMin;
         this.validMax = validMax;
         this.nbDonnees = nbDonnees;
         this.tempsUpdateMax=tempsUpdateMax;
         this.tempsUpdateMin=tempsUpdateMin;
+        this.lectureClassique=lectureClassique;
+        this.ecritureClassique=ecritureClassique;
+        this.lambda=lambda;
+        this.dureeSimulation=dureeSimulation;
         this.donneesTR = new ArrayList<DonneeTR>();
         this.donnees = new ArrayList<Donnee>();
         this.transactions = new ArrayList<Transaction>();
+        this.transactionsTot = new ArrayList<Transaction>();
         this.ID_DONNEE=0;
         this.ID_TRANSACTION=0;
         this.NB=0;
@@ -62,8 +69,11 @@ public class Simulation {
             Collections.sort(transactions);
             for(int j=0;j<transactions.size();j++){
                 if(transactions.get(j).getEcheance()<i){
-                    transactions.add(new Transaction(ID_TRANSACTION++,transactions.get(j).getIdDonnee(),i,dureeSimulation));
-                    //System.out.println("Pourquoi ça fait de la merde ----> JJJJJJJJJJJJJJJJJJJJ ____________________           : "+ j + " getIdDonne :      " + transactions.get(j).getIdDonnee() + "              ------             Size de transations :       ____        " + donneesTR.size());
+
+                    Transaction t = new Transaction(ID_TRANSACTION++,transactions.get(j).getIdDonnee(),i,dureeSimulation);
+                    transactions.add(t);
+                    transactionsTot.add(t);
+
                     if(transactions.get(j).getIdDonnee() < donneesTR.size() && donneesTR.get(transactions.get(j).getIdDonnee()).isMisAJour()){
                         donneesTR.get(transactions.get(j).getIdDonnee()).setReadable(true);
                         donneesTR.get(transactions.get(j).getIdDonnee()).setMisAJour(false);
@@ -84,7 +94,9 @@ public class Simulation {
             //Création des transactions de mise à jour
             for(DonneeTR d : donneesTR){
                 if((int)Math.floor(d.getEcheance()*2/3) == i){
-                    transactions.add(new Transaction(ID_TRANSACTION++,d.getId(),i,d.getEcheance()));
+                    Transaction t = new Transaction(ID_TRANSACTION++,d.getId(),i,d.getEcheance());
+                    transactions.add(t);
+                    transactionsTot.add(t);
                     NB++;
                 }
             }
@@ -123,7 +135,7 @@ public class Simulation {
             }
 
         }
-        return "Transactions lancées : "+NB+" dont ratées : "+NB_TR_FOIRE;
+        return "Transactions lancées : "+NB+" dont " + NB_UTIL+ " transactions utilisateurs et "+NB_TR_FOIRE + " transactions ratées";
     }
 
     private ArrayList<DonneeTR> creerDonneesTR(){
@@ -141,6 +153,8 @@ public class Simulation {
         }
         return aRetourner;
     }
+
+    public ArrayList<Transaction> getTransactionsTot() {return transactionsTot;}
 
     //TODO méthode ajouterOperation
     private void ajouterOperation(int nbTransaction, int tempsLectureTR, int tempsLecture, int tempsEcriture){
@@ -161,20 +175,35 @@ public class Simulation {
 
     private double transactionPoisson(int i) {
 
+        Transaction t;
+
         //Creation Transaction lecture donnée TR
         int indiceRandom = (int) (Math.random()*(donneesTR.size()-1));
         DonneeTR dtr = donneesTR.get(indiceRandom);
-        transactions.add(new Transaction(ID_TRANSACTION++,dtr.getId(),i, dtr.getEcheance()));
+        t = new Transaction(ID_TRANSACTION++,dtr.getId(),i, dtr.getEcheance());
+        transactions.add(t);
+        transactionsTot.add(t);
+        NB++;
+        NB_UTIL++;
 
         //Creation Transaction lecture donnée
         indiceRandom = (int) (Math.random()*(donnees.size()-1));
         Donnee don = donnees.get(indiceRandom);
-        transactions.add(new Transaction(ID_TRANSACTION++,don.getId(),i, lectureClassique));
+        t = new Transaction(ID_TRANSACTION++,don.getId(),i, lectureClassique);
+        transactions.add(t);
+        transactionsTot.add(t);
+        NB++;
+        NB_UTIL++;
+
 
         //Creation Transaction ecriture donnée
         indiceRandom = (int) (Math.random()*(donnees.size()-1));
         don = donnees.get(indiceRandom);
-        transactions.add(new Transaction(ID_TRANSACTION++,don.getId(),i, ecritureClassique));
+        t = new Transaction(ID_TRANSACTION++,don.getId(),i, ecritureClassique);
+        transactions.add(t);
+        transactionsTot.add(t);
+        NB++;
+        NB_UTIL++;
 
         return getPoissonRandom(lambda);
     }

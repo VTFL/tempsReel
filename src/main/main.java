@@ -10,7 +10,7 @@ public class main {
 
 
         //TODO : Lancement de la simulation avec les paramètres
-        Simulation s = new Simulation(10,5,20,15,1,3);
+        Simulation s = new Simulation(10,5,20,15,1,3,1,1,5.0,300);
         System.out.println(s.lancer());
     }
 }
